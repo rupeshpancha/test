@@ -1,12 +1,11 @@
 <?php
-include('connection.php');
+include('config.php');
 session_start();
 
-$un = $_SESSION['un'];
-$role_id = $_SESSION['role_id'];
+$un = $_SESSION['username'];
 
 if (!$un) {
-    header("Location:login.php");
+    header("Location:login1.php");
 }
 
 ?>
@@ -16,79 +15,81 @@ if (!$un) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blood Bank Management System - Login</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>changing password</title>
     <style>
         label{
             font-weight: bold;
         }
     </style>
-     <style>
-        /* body,
-        html {
-            height: 100%;
+
+<style>
+        body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden;
-
-          }  /* Prevent scrolling on body */
-         */
-
-        .container {
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
-        .sidebar {
-            width: 200px;
-            background: #de1f26;
-            ;
-            color: #fff;
-            padding: 20px;
-            flex-shrink: 0;
-            /* Prevent sidebar from shrinking */
-            overflow-y: auto;
-            /* Enable vertical scrolling for sidebar if needed */
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin-top: 0;
-        }
-
-        .sidebar ul li {
-            margin-top: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            font-size: 25px;
-        }
-
-        .sidebar ul li a {
-            color: #FFf;
-            text-decoration: none;
-        }
-
-        .sidebar ul li a:hover {
-            color: #FFA500;
-        }
-
-        .content {
+        .container {
             flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f7f7f7;
             padding: 20px;
-            overflow-y: auto;
-            /* Enable vertical scrolling for content if needed */
+        }
+
+        h1 {
+            text-align: center;
+            color: #de1f26;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #de1f26;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #ff4d4d;
         }
 
         .footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
             background: #de1f26;
             color: #fff;
             padding: 10px;
             text-align: center;
+            width: 100%;
         }
 
         .footer button {
@@ -98,25 +99,12 @@ if (!$un) {
             padding: 8px 16px;
             cursor: pointer;
             margin-right: 10px;
+            border-radius: 4px;
         }
 
         .footer button:hover {
             background-color: #FFA500;
         }
-
-        .clicked-link {
-            display: none;
-            /* Hide the div by default */
-            background-color: #f0f0f0;
-            padding: 10px;
-            margin-top: 10px;
-        }
-
-        .sidebar ul li a:target+.clicked-link {
-            display: block;
-            /* Show the div when the corresponding anchor is targeted */
-        }
-        
     </style>
 </head>
 <body>
@@ -148,26 +136,7 @@ if (!$un) {
         };
     </script>
     </div>
-    <div class="footer">
-        Logged in as <span id="username"><?php echo $un ?></span>
-        <button onclick="logout()">Logout</button>
-        <button onclick="changePassword()">Change Password</button>
-    </div>
-
-    <!-- <div id="home" class="clicked-link">Clicked Link: Home</div>
-    <div id="about" class="clicked-link">Clicked Link: About</div>
-    <div id="services" class="clicked-link">Clicked Link: Services</div>
-    <div id="contact" class="clicked-link">Clicked Link: Contact</div> -->
-
-    <script>
-        function logout() {
-            window.location.href = "logout.php"; // replace with your link
-        }
-
-        // function changePassword() {
-        //     console.log('Change password functionality');
-        // }
-    </script>
+    
 </body>
 
 
