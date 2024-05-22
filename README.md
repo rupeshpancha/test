@@ -120,7 +120,7 @@ if (!$un) {
         <label for="confirm_password">Confirm New Password:</label>
         <input type="password" id="confirm_password" name="confirm_password" required><br><br>
 
-        <input type="submit" value="Change Password">
+        <input type="submit" name="own_changepassword" value="Change Password">
     </form>
 
     <script>
