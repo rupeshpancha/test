@@ -1,0 +1,26 @@
+<?php
+include('db_connection.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $employee_id = $_POST['employee_id'];
+    $booking_id = $_POST['booking_id'];
+
+    // Check if the employee and booking are valid
+    $employee_result = $conn->query("SELECT employee_id FROM employees WHERE employee_id = $employee_id");
+    $booking_result = $conn->query("SELECT booking_id FROM bookings WHERE booking_id = $booking_id");
+
+    if ($employee_result->num_rows > 0 && $booking_result->num_rows > 0) {
+        // Assign the booking to the employee
+        $sql = "INSERT INTO employee_bookings (employee_id, booking_id) VALUES ($employee_id, $booking_id)";
+        if ($conn->query($sql) === TRUE) {
+            echo "Booking assigned to employee successfully!";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    } else {
+        echo "Invalid employee or booking.";
+    }
+
+    $conn->close();
+}
+?>
