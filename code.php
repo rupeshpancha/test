@@ -1,182 +1,207 @@
-<?php include ("dbconfig.php"); ?>
+<?php
+include('config.php');
+session_start();
 
+$un = $_SESSION['username'];
+if (!$un) {
+    header("Location: login1.php");
+    exit();
+}
+
+// Fetch employees
+$employees_result = $conn->query("SELECT employee_id, employee_name FROM employees");
+
+// Fetch bookings
+$bookings_result = $conn->query("SELECT booking_id, username FROM booking_info");
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Create</title>
-    <link rel="stylesheet" href="invoice.css">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style2.css">
+    <style>
+         body {
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url(images/p1.jpg) no-repeat center center fixed; /* Background image */
+            background-size: cover;
+        }
+
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(179, 229, 252, 0.8); /* Transparent light blue gradient */
+            color: black;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .footer button {
+            background-color: #73AD21;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .footer button:hover {
+            background-color: #5c8b17; /* Slightly darker shade on hover */
+        }
+
+        .container {
+            margin: auto;
+            width: 50%;
+            border: 3px solid #73AD21;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(223, 255, 214, 0.8); /* Transparent light pastel green */
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: rgba(179, 229, 252, 0.8); /* Transparent light blue gradient */
+            color: black;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px 20px;
+        }
+
+        .sidebar ul li a {
+            color: black;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+        }
+
+        .sidebar ul li a:hover, .sidebar ul li a.active {
+            background-color: #62b3f5;
+        }
+
+        .sidebar ul li a:last-child {
+            color: black;
+            font-weight: bold;
+        }
+        
+        input[type="submit"] {
+            background-color: #73AD21; /* Darker green */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #5c8b17; /* Slightly darker shade on hover */
+        }
+    </style> 
 </head>
-
 <body>
-    <div class="container">
-        <div class="form-container">
-        
-            <!-- start print button -->
-            <a href="#" onclick="window.print()"
-                style="margin:20px;display: inline-block; padding: 10px 20px; background-color: #28a745; color: #fff; text-decoration: none; border-radius: 5px;">Generate
-                Invoice</a>
-                <!-- end print button -->
-               
-        
-            <h1>GENX ELECTRICAL AND I.T. SOLUTIONS</h1>
-            <h2>Bhaktapur, Nepal</h2>
-            <h3>9849423497, 9823552180</h3>
-
-            <form>
-                <h4><label for="bill_number">Bill Number:</label><br>
-                <input type="text" id="bill_number" name="bill_number"><br>
-
-                <label for="pan_number">PAN Number:</label><br>
-                <input type="text" id="pan_number" name="pan_number" value="618664238"><br></h4>
-
-                <h5><label for="created_at">Date:</label>
-                <input type="date" readonly id="created_at" name="created_at"><br><br></h5>
-
-                <?php
-                $sql = "SELECT * FROM sell_products WHERE invoice_id ='" . $_GET['invoice_id'] . "'";
-                $result = $conn->query($sql);
-                $customerDetails = null;
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        $customerDetails = $row;
-                    }
-                }
-                ?>
-
-                <?php
-                $sql = "SELECT * FROM invoices WHERE id ='" . $_GET['invoice_id'] . "'";
-                $invoiceResult = $conn->query($sql);
-                $invoiceData = null;
-                if ($invoiceResult->num_rows > 0) {
-                    while ($row = $invoiceResult->fetch_assoc()) {
-                        $invoiceData = $row;
-                    }
-                }
-                ?>
-
-                <label for="customer_name">Customer Name:</label>
-                <input type="text" readonly id="customer_name" value="<?php echo $customerDetails['customer_name']; ?>"><br><br>
-
-                <label for="customer_address">Customer Address:</label>
-                <input type="text" readonly id="customer_address" value="<?php echo $customerDetails['customer_address']; ?>"><br><br>
-
-                <label for="customer_number">Customer Number:</label>
-                <input type="text" readonly id="customer_number" value="<?php echo $customerDetails['customer_number']; ?>"><br><br>
-
-                <table class="table" width="60%" align="center">
-                    <tr>
-                        <th>SN</th>
-                        <th>Particulars</th>
-                        <th>Qty.</th>
-                        <th>Rate</th>
-                        <th>Amount</th>
-                    </tr>
-                    <tr>
-                        <td><input type="text" name="SN[]"></td>
-                        <td><input type="text" name="particulars[]"></td>
-                        <td><input type="text" name="quantity[]" oninput="calculateAmount(this)"></td>
-                        <td><input type="text" name="rate[]" oninput="calculateAmount(this)"></td>
-                        <td><input type="text" name="amount[]" readonly></td>
-                    </tr>
-                    <!-- Additional rows will be added here -->
-                </table>
-
-                <button type="button" id="addRowButton">Add More</button>
-
-                <div>
-                    <label for="discount_percent">Discount(%):</label>
-                    <input type="number" id="discount_percent" name="discount_percent" oninput="calculateGrandTotal()" value="<?php echo $invoiceData['discount_percent']; ?>"><br><br>
-                </div>
-
-                <div>
-                    <label for="total">Total:</label>
-                    <input type="text" id="total" name="total" value="<?php echo $invoiceData['total'] ?>" readonly><br><br>
-                </div>
-
-                <p>*Goods once sold are not returnable.*</p>
-                <p>*E. & O.E</p>
-
-                <div class="footer-section">
-                    <div>
-                        <p>Received by:</p>
-                        <div class="signature"></div>
-                    </div>
-                    <div>
-                        <p>Signature:</p>
-                        <div class="signature"></div>
-                    </div>
-                </div>
-            </form>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <ul>
+            <li><a href="user_management.php">User Management</a></li>
+            <li><a href="employee_management.php">Employee Management</a></li>
+            <li><a href="booking.php">Booking</a></li>
+            <li><a href="Assigned_pilot.php">Assigned Pilot</a></li>
+            <li><a href="reports.php">Reports</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div id="user-management-section" class="content-section">
+            <h2>User Management</h2>
+            <p>Manage users here.</p>
+        </div>
+        <div id="reports-section" class="content-section">
+            <h2>Reports</h2>
+            <p>View reports here.</p>
         </div>
     </div>
+    <div class="footer">
+        Logged in as <span id="username"><?php echo htmlspecialchars($un); ?></span>
+        <button onclick="logout()">Logout</button>
+        <button onclick="changePassword()">Change Password</button>
+    </div>
+    <div class="container">
+    <h1>Assign Booking To Employees</h1>
+    <form action="assign_booking.php" method="post">
+        <label for="employee">Select Employee:</label>
+        <select name="employee_id" id="employee" required>
+            <?php while ($employee = $employees_result->fetch_assoc()): ?>
+                <option value="<?php echo htmlspecialchars($employee['employee_id']); ?>">
+                    <?php echo htmlspecialchars($employee['employee_name']); ?>
+                </option>
+            <?php endwhile; ?>
+        </select>
+        <br><br>
+        <label for="booking">Select Booking:</label>
+        <select name="booking_id" id="booking" required>
+            <?php 
+            $bookings_result = $conn->query("SELECT booking_id, username FROM booking_info where status='pending'");
+            
+            $selected_username = isset($_GET['selected_username']) ? $_GET['selected_username'] : '';
+            while ($booking = $bookings_result->fetch_assoc()): ?>
+                <?php if ($booking['username'] === $selected_username): ?>
+                    <option value="<?php echo htmlspecialchars($booking['booking_id']); ?>" selected>
+                        <?php echo htmlspecialchars($booking['username'] . " (ID: " . $booking['booking_id'] . ")"); ?>
+                    </option>
+                <?php else: ?>
+                    <option value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
+                        <?php echo htmlspecialchars($booking['username'] . " (ID: " . $booking['booking_id'] . ")"); ?>
+                    </option>
+                <?php endif; ?>
+            <?php endwhile; ?>
+        </select>
+        <br><br>
+        <input type="submit" value="Assign Booking">
+    </form>
+</div>
+
+
+
 
     <script>
-        function calculateAmount(input) {
-            var row = input.closest('tr');
-            var quantity = row.querySelector('input[name="quantity[]"]').value;
-            var rate = row.querySelector('input[name="rate[]"]').value;
-            var amount = parseFloat(quantity) * parseFloat(rate);
-            row.querySelector('input[name="amount[]"]').value = isNaN(amount) ? "" : amount.toFixed(2);
-            calculateGrandTotal();
+        function logout() {
+            window.location.href = "logout.php"; 
         }
 
-        function calculateGrandTotal() {
-            var amounts = document.querySelectorAll('input[name="amount[]"]');
-            var subtotal = 0;
-            amounts.forEach(function (input) {
-                subtotal += parseFloat(input.value) || 0;
-            });
-            var discountPercent = parseFloat(document.getElementById('discount_percent').value) || 0;
-            var total = subtotal - (subtotal * (discountPercent / 100));
-            document.getElementById('total').value = total.toFixed(2);
-            convertNumberToWords(total);
-        }
-
-        function convertNumberToWords(amount) {
-            var words = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-            var tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-            amount = amount.toFixed(2).split(".");
-            var num = parseInt(amount[0]);
-            var dec = parseInt(amount[1]);
-            var numWords = "";
-
-            if (num > 19) {
-                numWords += tens[Math.floor(num / 10)] + " " + words[num % 10];
-            } else {
-                numWords += words[num];
-            }
-            if (dec > 0) {
-                numWords += " and " + words[dec] + " Cents";
-            }
-            document.getElementById('amount_in_words').value = numWords + " Only";
-        }
-
-        document.getElementById('addRowButton').addEventListener('click', function () {
-            var table = document.querySelector('table');
-            var newRow = table.insertRow();
-            newRow.innerHTML = `
-                <td><input type="text" name="SN[]"></td>
-                <td><input type="text" name="particulars[]"></td>
-                <td><input type="text" name="quantity[]" oninput="calculateAmount(this)"></td>
-                <td><input type="text" name="rate[]" oninput="calculateAmount(this)"></td>
-                <td><input type="text" name="amount[]" readonly></td>
-            `;
-        });
-
-        function generateInvoice() {
-            document.getElementById('generateInvoiceButton').style.display = 'none';
-            window.print();
+        function changePassword() {
+            window.location.href = "own_changepassword.php"; 
         }
     </script>
-
 </body>
-
 </html>
 
-<?php
-// Close connection
-$conn->close();
-?>
