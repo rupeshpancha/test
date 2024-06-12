@@ -1,32 +1,51 @@
- <div class="container">
-        <h1>Assign Booking To Employees</h1>
-        <form action="assign_booking.php" method="post">
-            <label for="employee">Select Employee:</label>
-            <select name="employee_id" id="employee" required>
-                <?php while ($employee = $employees_result->fetch_assoc()): ?>
-                    <option value="<?php echo htmlspecialchars($employee['employee_id']); ?>">
-                        <?php echo htmlspecialchars($employee['employee_name']); ?>
+<div class="container">
+    <h1>Assign Booking To Employees</h1>
+    <form action="assign_booking.php" method="post">
+        <label for="employee">Select Employee:</label>
+        <select name="employee_id" id="employee" required>
+            <?php 
+            // Get today's date in the format YYYY-MM-DD
+            $today_date = date('Y-m-d');
+
+            // Modify the SQL query to include today's date
+            $employee_query = "SELECT employee_id 
+                               FROM employee_bookings 
+                               WHERE DATE(booking_date) = '$today_date' 
+                               GROUP BY employee_id 
+                               HAVING COUNT(booking_id) <= 3";
+
+            // Execute the query to fetch employees
+            $employees_result = $conn->query($employee_query);
+
+            // Fetch and display employee IDs
+            while ($employee = $employees_result->fetch_assoc()): ?>
+                <option value="<?php echo htmlspecialchars($employee['employee_id']); ?>">
+                    Employee ID <?php echo htmlspecialchars($employee['employee_id']); ?>
+                </option>
+            <?php endwhile; ?>
+        </select>
+        <br><br>
+        <label for="booking">Select Booking:</label>
+        <select name="booking_id" id="booking" required>
+            <?php 
+            // Fetch pending bookings
+            $bookings_result = $conn->query("SELECT booking_id, username FROM booking_info WHERE status='pending'");
+            
+            // Loop through bookings and display them
+            $selected_username = isset($_GET['selected_username']) ? $_GET['selected_username'] : '';
+            while ($booking = $bookings_result->fetch_assoc()): ?>
+                <?php if ($booking['username'] === $selected_username): ?>
+                    <option value="<?php echo htmlspecialchars($booking['booking_id']); ?>" selected>
+                        <?php echo htmlspecialchars($booking['username'] . " (ID: " . $booking['booking_id'] . ")"); ?>
                     </option>
-                <?php endwhile; ?>
-            </select>
-            <br><br>
-            <label for="booking">Select Booking:</label>
-            <select name="booking_id" id="booking" required>
-                <?php 
-                $selected_username = isset($_GET['selected_username']) ? $_GET['selected_username'] : '';
-                while ($booking = $bookings_result->fetch_assoc()): ?>
-                    <?php if ($booking['username'] === $selected_username): ?>
-                        <option value="<?php echo htmlspecialchars($booking['booking_id']); ?>" selected>
-                            <?php echo htmlspecialchars($booking['username'] . " (ID: " . $booking['booking_id'] . ")"); ?>
-                        </option>
-                    <?php else: ?>
-                        <option value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
-                            <?php echo htmlspecialchars($booking['username'] . " (ID: " . $booking['booking_id'] . ")"); ?>
-                        </option>
-                    <?php endif; ?>
-                <?php endwhile; ?>
-            </select>
-            <br><br>
-            <input type="submit" value="Assign Booking">
-        </form>
-    </div>
+                <?php else: ?>
+                    <option value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
+                        <?php echo htmlspecialchars($booking['username'] . " (ID: " . $booking['booking_id'] . ")"); ?>
+                    </option>
+                <?php endif; ?>
+            <?php endwhile; ?>
+        </select>
+        <br><br>
+        <input type="submit" value="Assign Booking">
+    </form>
+</div>
