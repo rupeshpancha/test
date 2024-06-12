@@ -11,6 +11,14 @@ if (!$un) {
 // Fetch employees
 $employees_result = $conn->query("SELECT employee_id, employee_name FROM employees");
 
+
+$employee_bookings_query = "SELECT * FROM employee_bookings GROUP BY booking_id HAVING COUNT(booking_id) <= 3";
+$employee_bookings_result = $conn->query($employee_bookings_query);
+
+// Check if there are any results
+
+
+
 // Fetch bookings
 $bookings_result = $conn->query("SELECT booking_id, username FROM booking_info");
 ?>
@@ -159,19 +167,23 @@ $bookings_result = $conn->query("SELECT booking_id, username FROM booking_info")
     <h1>Assign Booking To Employees</h1>
     <form action="assign_booking.php" method="post">
         <label for="employee">Select Employee:</label>
-        <select name="employee_id" id="employee" required>
-            <?php while ($employee = $employees_result->fetch_assoc()): ?>
-                <option value="<?php echo htmlspecialchars($employee['employee_id']); ?>">
-                    <?php echo htmlspecialchars($employee['employee_name']); ?>
-                </option>
-            <?php endwhile; ?>
-        </select>
+       if ($employee_bookings_result->num_rows > 0) {
+    // Output each row within the select dropdown
+    while ($booking = $employee_bookings_result->fetch_assoc()) {
+        echo '<option value="' . htmlspecialchars($booking['employee_id']) . '">';
+        echo htmlspecialchars($booking['employee_name']);
+        echo '</option>';
+    }
         <br><br>
         <label for="booking">Select Booking:</label>
         <select name="booking_id" id="booking" required>
             <?php 
             $bookings_result = $conn->query("SELECT booking_id, username FROM booking_info where status='pending'");
+
             
+
+
+
             $selected_username = isset($_GET['selected_username']) ? $_GET['selected_username'] : '';
             while ($booking = $bookings_result->fetch_assoc()): ?>
                 <?php if ($booking['username'] === $selected_username): ?>
