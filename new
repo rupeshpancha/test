@@ -17,12 +17,20 @@
             // Execute the query to fetch employees
             $employees_result = $conn->query($employee_query);
 
-            // Fetch and display employee IDs
-            while ($employee = $employees_result->fetch_assoc()): ?>
-                <option value="<?php echo htmlspecialchars($employee['employee_id']); ?>">
-                    Employee ID <?php echo htmlspecialchars($employee['employee_id']); ?>
-                </option>
-            <?php endwhile; ?>
+            // Check if there are any rows returned
+            if ($employees_result === false) {
+                echo "Error: " . $conn->error;
+            } elseif ($employees_result->num_rows === 0) {
+                echo "No employees found for today's date.";
+            } else {
+                // Fetch and display employee IDs
+                while ($employee = $employees_result->fetch_assoc()): ?>
+                    <option value="<?php echo htmlspecialchars($employee['employee_id']); ?>">
+                        Employee ID <?php echo htmlspecialchars($employee['employee_id']); ?>
+                    </option>
+                <?php endwhile; 
+            }
+            ?>
         </select>
         <br><br>
         <label for="booking">Select Booking:</label>
