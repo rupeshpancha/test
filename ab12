@@ -27,7 +27,6 @@
 
 
 
-
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('bookFormModal');
     const btn = document.getElementById('bookNowBtn');
@@ -69,11 +68,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listener for "Sign in?" link
     signInLink.onclick = function(event) {
         event.preventDefault(); // Prevent default link behavior
-        // Hide login form, hide forgot password form, show sign-in form
+        // Hide login form, hide forgot password form
         loginForm.style.display = 'none';
         forgotPasswordForm.style.display = 'none';
-        // Load and display the sign-in form file content
-        fetch('sign_in_form.html')
+        // Load and display the sign-in form PHP file content
+        fetch('signIn.php')
             .then(response => response.text())
             .then(html => {
                 signInFormContainer.innerHTML = html;
