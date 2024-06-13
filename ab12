@@ -1,3 +1,4 @@
+
 <div class="button-container">
     <button class="btn btn-primary" id="bookNowBtn">Book Now</button>
 
@@ -27,66 +28,6 @@
 
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('bookFormModal');
-    const btn = document.getElementById('bookNowBtn');
-    const span = document.getElementsByClassName('closeBtn')[0];
-
-    // Function to display the modal when the button is clicked
-    btn.onclick = function() {
-        modal.style.display = 'block';
-    }
-
-    // Function to close the modal when the close button is clicked
-    span.onclick = function() {
-        modal.style.display = 'none';
-    }
-
-    // Function to close the modal when clicking outside the modal
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    }
-
-    // Selecting elements for login, forgot password, and sign-in forms
-    const loginForm = document.getElementById('loginForm');
-    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-    const signInLink = document.getElementById('signInLink');
-    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-    const signInFormContainer = document.getElementById('signInFormContainer'); // Container for sign-in form
-
-    // Event listener for "Forgot Password?" link
-    forgotPasswordLink.onclick = function(event) {
-        event.preventDefault(); // Prevent default link behavior
-        // Hide login form, show forgot password form, hide sign-in form
-        loginForm.style.display = 'none';
-        forgotPasswordForm.style.display = 'block';
-        signInFormContainer.innerHTML = ''; // Clear sign-in form container
-    }
-
-    // Event listener for "Sign in?" link
-    signInLink.onclick = function(event) {
-        event.preventDefault(); // Prevent default link behavior
-        // Hide login form, hide forgot password form
-        loginForm.style.display = 'none';
-        forgotPasswordForm.style.display = 'none';
-        // Load and display the sign-in form PHP file content
-        fetch('signIn.php')
-            .then(response => response.text())
-            .then(html => {
-                signInFormContainer.innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error loading sign-in form:', error);
-            });
-    }
-
-    // Setting min date for date input
-    const dateInput = document.getElementById('date');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
-});
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('bookFormModal');
     const btn = document.getElementById('bookNowBtn');
