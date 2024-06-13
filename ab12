@@ -87,3 +87,44 @@ document.addEventListener('DOMContentLoaded', function() {
     const today = new Date().toISOString().split('T')[0];
     dateInput.setAttribute('min', today);
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('bookFormModal');
+    const btn = document.getElementById('bookNowBtn');
+    const span = document.getElementsByClassName('closeBtn')[0];
+
+    btn.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    span.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    const signInLink = document.getElementById('signInLink');
+    const signInFormContainer = document.getElementById('signInFormContainer');
+
+    signInLink.onclick = function(event) {
+        event.preventDefault();
+        loginForm.style.display = 'none';
+        signInFormContainer.innerHTML = ''; // Clear previous content
+        fetch('signIn.php')
+            .then(response => response.text())
+            .then(html => {
+                signInFormContainer.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error fetching sign-in form:', error);
+            });
+    }
+
+    const dateInput = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+});
