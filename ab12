@@ -34,65 +34,62 @@
 
 
 
-
-
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('bookFormModal');
     const btn = document.getElementById('bookNowBtn');
     const span = document.getElementsByClassName('closeBtn')[0];
 
+    // Function to display the modal when the button is clicked
     btn.onclick = function() {
         modal.style.display = 'block';
     }
 
+    // Function to close the modal when the close button is clicked
     span.onclick = function() {
         modal.style.display = 'none';
     }
 
+    // Function to close the modal when clicking outside the modal
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = 'none';
         }
     }
 
-    const form = document.getElementById('loginForm');
-    form.onsubmit = function(event) {
-        event.preventDefault(); // Prevent default form submission
+    // Selecting elements for login, forgot password, and sign-in forms
+    const loginForm = document.getElementById('loginForm');
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    const signInLink = document.getElementById('signInLink');
+    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+    const signInFormContainer = document.getElementById('signInFormContainer'); // Container for sign-in form
 
-        // Extract data from form fields
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        // Perform form validation here if needed
-
-        // Example: Send form data via AJAX
-        const formData = new FormData();
-        formData.append('email', email);
-        formData.append('password', password);
-
-        fetch('your_login_endpoint', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (response.ok) {
-                // If login successful, hide modal
-                modal.style.display = 'none';
-                alert('Login successful!');
-                // Optionally, redirect user or perform other actions
-            } else {
-                // If login failed, handle error
-                alert('Login failed. Please try again.');
-                // Optionally, display error message to user
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again later.');
-            // Optionally, handle other error cases
-        });
+    // Event listener for "Forgot Password?" link
+    forgotPasswordLink.onclick = function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        // Hide login form, show forgot password form, hide sign-in form
+        loginForm.style.display = 'none';
+        forgotPasswordForm.style.display = 'block';
+        signInFormContainer.innerHTML = ''; // Clear sign-in form container
     }
 
+    // Event listener for "Sign in?" link
+    signInLink.onclick = function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        // Hide login form, hide forgot password form, show sign-in form
+        loginForm.style.display = 'none';
+        forgotPasswordForm.style.display = 'none';
+        // Load and display the sign-in form file content
+        fetch('sign_in_form.html')
+            .then(response => response.text())
+            .then(html => {
+                signInFormContainer.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sign-in form:', error);
+            });
+    }
+
+    // Setting min date for date input
     const dateInput = document.getElementById('date');
     const today = new Date().toISOString().split('T')[0];
     dateInput.setAttribute('min', today);
