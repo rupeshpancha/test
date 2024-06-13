@@ -24,3 +24,59 @@
           </div>
         </div>
       </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const nameInput = document.getElementById('name');
+      const timeInput = document.getElementById('time');
+
+      function validateName() {
+        const nameValue = nameInput.value.trim();
+        const minLength = 3;
+        const maxLength = 30;
+        const nameRegex = /^[A-Za-z\s]+$/;
+
+        if (nameValue.length < minLength || nameValue.length > maxLength || !nameRegex.test(nameValue)) {
+          nameInput.setCustomValidity('Name must be between 3 and 30 characters long and contain only letters and spaces.');
+        } else {
+          nameInput.setCustomValidity('');
+        }
+      }
+
+      function validateTime() {
+        const selectedTime = new Date('1970-01-01T' + timeInput.value);
+        const startTime = new Date('1970-01-01T10:00:00');
+        const endTime = new Date('1970-01-01T16:00:00');
+
+        if (selectedTime < startTime || selectedTime > endTime) {
+          timeInput.setCustomValidity('Time must be between 10:00 AM and 4:00 PM.');
+        } else {
+          timeInput.setCustomValidity('');
+        }
+      }
+
+      nameInput.addEventListener('input', validateName);
+      timeInput.addEventListener('input', validateTime);
+    });
+
+    document.getElementById('bookNowBtn').addEventListener('click', function() {
+      var loggedIn = <?php echo isset($_SESSION['loggedin']) ? 'true' : 'false'; ?>;
+      if (loggedIn) {
+        document.getElementById('bookFormModal').style.display = 'block';
+      } else {
+        document.getElementById('loginModal').style.display = 'block';
+      }
+    });
+    document.querySelectorAll('.closeBtn').forEach(function(closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        document.querySelectorAll('.modal').forEach(function(modal) {
+          modal.style.display = 'none';
+        });
+      });
+    });
+
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    }
+  </script>
